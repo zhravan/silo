@@ -1,17 +1,28 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
+
+	"github.com/shravan20/silo/internal/config"
 )
 
 func main() {
-	if len(os.Args) < 2 {
+	configPath := flag.String("config", "backup.yaml", "path to config file")
+	flag.Parse()
+	args := flag.Args()
+
+	if len(args) < 1 {
 		printUsage()
 		os.Exit(1)
 	}
-	switch os.Args[1] {
+	switch args[0] {
 	case "run":
+		if _, err := config.Load(*configPath); err != nil {
+			fmt.Fprintf(os.Stderr, "config: %v\n", err)
+			os.Exit(1)
+		}
 		// TODO: run backup
 		os.Exit(0)
 	case "restore":
