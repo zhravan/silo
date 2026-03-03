@@ -2,6 +2,3 @@
 backup.yaml
 .silo/
 
-# Do not commit markdown or Cursor-related files (see .cursor/rules/commits.mdc)
-*.md
-.cursor/
