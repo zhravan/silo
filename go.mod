@@ -1,4 +1,4 @@
-module github.com/shravan20/silo
+module github.com/zhravan/silo
 
 go 1.24.3
 

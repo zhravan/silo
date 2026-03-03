@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/shravan20/silo/internal/backup"
-	"github.com/shravan20/silo/internal/config"
+	"github.com/zhravan/silo/internal/backup"
+	"github.com/zhravan/silo/internal/config"
 )
 
 func main() {

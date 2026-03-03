@@ -11,12 +11,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shravan20/silo/internal/backend"
-	"github.com/shravan20/silo/internal/chunk"
-	"github.com/shravan20/silo/internal/compress"
-	"github.com/shravan20/silo/internal/config"
-	"github.com/shravan20/silo/internal/crypto"
-	"github.com/shravan20/silo/internal/index"
+	"github.com/zhravan/silo/internal/backend"
+	"github.com/zhravan/silo/internal/chunk"
+	"github.com/zhravan/silo/internal/compress"
+	"github.com/zhravan/silo/internal/config"
+	"github.com/zhravan/silo/internal/crypto"
+	"github.com/zhravan/silo/internal/index"
 )
 
 const saltKey = ".salt"

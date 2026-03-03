@@ -6,7 +6,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"github.com/shravan20/silo/internal/chunk"
+	"github.com/zhravan/silo/internal/chunk"
 )
 
 // Index maps chunk IDs to backend keys for deduplication.

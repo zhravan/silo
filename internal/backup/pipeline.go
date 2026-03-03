@@ -3,8 +3,8 @@ package backup
 import (
 	"io"
 
-	"github.com/shravan20/silo/internal/chunk"
-	"github.com/shravan20/silo/internal/compress"
+	"github.com/zhravan/silo/internal/chunk"
+	"github.com/zhravan/silo/internal/compress"
 )
 
 // ProcessFile reads from r, chunks with ch, compresses each chunk with comp, hashes, and returns chunk IDs and compressed payloads in order.
