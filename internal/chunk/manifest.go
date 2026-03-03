@@ -1,5 +1,11 @@
 package chunk
 
+import (
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+)
+
 // ManifestEntry is a single file's metadata and its chunk IDs in order.
 type ManifestEntry struct {
 	Path     string
@@ -9,6 +15,49 @@ type ManifestEntry struct {
 // Manifest holds the list of entries (path → chunk IDs) for a backup.
 type Manifest struct {
 	Entries []ManifestEntry
+}
+
+// MarshalJSON serializes the manifest for encryption and storage.
+func (m *Manifest) MarshalJSON() ([]byte, error) {
+	entries := make([]struct {
+		Path     string   `json:"path"`
+		ChunkIDs []string `json:"chunk_ids"`
+	}, len(m.Entries))
+	for i, e := range m.Entries {
+		entries[i].Path = e.Path
+		entries[i].ChunkIDs = make([]string, len(e.ChunkIDs))
+		for j, id := range e.ChunkIDs {
+			entries[i].ChunkIDs[j] = id.String()
+		}
+	}
+	return json.Marshal(entries)
+}
+
+// UnmarshalJSON deserializes the manifest after decryption.
+func (m *Manifest) UnmarshalJSON(data []byte) error {
+	var entries []struct {
+		Path     string   `json:"path"`
+		ChunkIDs []string `json:"chunk_ids"`
+	}
+	if err := json.Unmarshal(data, &entries); err != nil {
+		return err
+	}
+	m.Entries = make([]ManifestEntry, len(entries))
+	for i, e := range entries {
+		m.Entries[i].Path = e.Path
+		m.Entries[i].ChunkIDs = make([]ChunkID, len(e.ChunkIDs))
+		for j, s := range e.ChunkIDs {
+			b, err := hex.DecodeString(s)
+			if err != nil {
+				return err
+			}
+			if len(b) != 32 {
+				return fmt.Errorf("chunk_id must be 32 bytes")
+			}
+			copy(m.Entries[i].ChunkIDs[j][:], b)
+		}
+	}
+	return nil
 }
 
 // Builder builds a manifest by adding path → chunk IDs.
