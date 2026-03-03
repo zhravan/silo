@@ -87,5 +87,46 @@ func Load(path string) (*Config, error) {
 	if err := yaml.Unmarshal(data, &cfg); err != nil {
 		return nil, fmt.Errorf("parse config: %w", err)
 	}
+	if err := cfg.Validate(); err != nil {
+		return nil, fmt.Errorf("config: %w", err)
+	}
 	return &cfg, nil
+}
+
+// Validate checks config and returns an error on first failure.
+func (c *Config) Validate() error {
+	if c.Name == "" {
+		return fmt.Errorf("name is required")
+	}
+	if len(c.Sources) == 0 {
+		return fmt.Errorf("at least one source is required")
+	}
+	switch c.Backend.Type {
+	case "s3":
+		if c.Backend.Bucket == "" {
+			return fmt.Errorf("backend.s3: bucket is required")
+		}
+	case "rest":
+		if c.Backend.BaseURL == "" {
+			return fmt.Errorf("backend.rest: base_url is required")
+		}
+	case "sftp":
+		if c.Backend.Host == "" || c.Backend.User == "" {
+			return fmt.Errorf("backend.sftp: host and user are required")
+		}
+	case "":
+		return fmt.Errorf("backend.type is required (s3, rest, or sftp)")
+	default:
+		return fmt.Errorf("backend.type must be s3, rest, or sftp (got %q)", c.Backend.Type)
+	}
+	if c.Encryption.PasswordEnv == "" && c.Encryption.KeyFile == "" {
+		return fmt.Errorf("encryption: password_env or key_file is required")
+	}
+	switch c.Compression.Type {
+	case "", "none", "lz4", "zstd":
+		// ok
+	default:
+		return fmt.Errorf("compression.type must be zstd, lz4, or none (got %q)", c.Compression.Type)
+	}
+	return nil
 }
