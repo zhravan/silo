@@ -1,3 +1,65 @@
-name: test
-sources: ["/tmp"]
-exclude: ["*.tmp"]
+# Backup job name (required).
+name: my-backup
+
+# Directories to back up (at least one required).
+sources:
+  - /home/user/documents
+  - /home/user/photos
+
+# Glob patterns to exclude from backup.
+exclude:
+  - "*.tmp"
+  - "*.cache"
+  - ".git/"
+
+# Schedule: run via cron, daemon, or both (leave empty to run only via `silo run`).
+schedule:
+  cron: "0 2 * * *"   # daily at 02:00
+  daemon:
+    every: "24h"
+    on_startup: false
+    jitter_seconds: 300
+
+# Compression: zstd, lz4, or none. Level 1-22 for zstd.
+compression:
+  type: zstd
+  level: 3
+
+# Encryption: set password via env (recommended) or key file. One required.
+encryption:
+  password_env: SILO_BACKUP_PASSWORD
+  # key_file: /path/to/secret.key
+
+# Backend: s3, rest, or sftp. Configure one.
+backend:
+  type: s3
+  bucket: my-backup-bucket
+  prefix: backups/my-job
+  region: us-east-1
+
+# REST backend (alternative)
+# backend:
+#   type: rest
+#   base_url: https://storage.example.com/api
+#   auth_header: Authorization
+#   token_env: SILO_REST_TOKEN
+
+# SFTP backend (alternative)
+# backend:
+#   type: sftp
+#   host: sftp.example.com
+#   port: 22
+#   user: backup
+#   key_file: ~/.ssh/backup_ed25519
+#   path: /backups
+
+# Chunking (content-defined chunking size bounds, bytes).
+chunking:
+  target_size: 65536
+  min_size: 8192
+  max_size: 262144
+
+# Concurrency: number of upload and scan workers.
+concurrency:
+  upload: 4
+  scan: 2
