@@ -42,9 +42,10 @@ case "$ARCH" in
   amd64)    ARCH=amd64 ;;
   aarch64)  ARCH=arm64 ;;
   arm64)    ARCH=arm64 ;;
-  armv6l|armv7l) ARCH=arm ;;
+  armv5l|armv6l|armv7l|armv8l|arm) ARCH=arm ;;
   *)
     echo "Unsupported arch: $ARCH" >&2
+    echo "Supported: x86_64, aarch64/arm64 (64-bit), armv5l/armv6l/armv7l/armv8l (32-bit Raspberry Pi)." >&2
     exit 1
     ;;
 esac
@@ -55,7 +56,11 @@ echo "Installing silo ${TAG} (${OS}/${ARCH}) from ${URL}"
 
 TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
-curl -sSL -o "${TMP}/silo" "$URL"
+if ! curl -sSLf -o "${TMP}/silo" "$URL"; then
+  echo "Download failed. Check that release ${TAG} includes ${BINARY} at:" >&2
+  echo "  https://github.com/${REPO}/releases/expanded_assets/${TAG}" >&2
+  exit 1
+fi
 chmod +x "${TMP}/silo"
 
 PREFIX="${SILO_PREFIX:-/usr/local}"

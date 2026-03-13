@@ -12,7 +12,7 @@ Install the latest release (Linux, macOS, Windows).
 curl -sSL https://raw.githubusercontent.com/zhravan/silo/main/scripts/install.sh | sh
 ```
 
-The script installs the binary to `/usr/local/bin/silo` (uses `sudo` if needed). To install to a different prefix:
+Supports x86_64, ARM64 (aarch64), and 32-bit ARM (Raspberry Pi: armv6l, armv7l, armv8l). The script installs the binary to `/usr/local/bin/silo` (uses `sudo` if needed). To install to a different prefix:
 
 ```bash
 SILO_PREFIX=$HOME/.local curl -sSL https://raw.githubusercontent.com/zhravan/silo/main/scripts/install.sh | sh
